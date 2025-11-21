@@ -16,8 +16,8 @@ def build(bld):
                                                            'energy', 'propagation',
                                                            'ble'])
     module.source = [
-        # Model files will go here as we implement them
-        # 'model/ble-discovery-header.cc',
+        # Model files
+        'model/ble-discovery-header.cc',
         # 'model/ble-mesh-node.cc',
         # 'model/ble-discovery-protocol.cc',
         # 'model/ble-cluster-election.cc',
@@ -31,15 +31,15 @@ def build(bld):
 
     module_test = bld.create_ns3_module_test_library('ble-mesh-discovery')
     module_test.source = [
-        # Test files will go here
-        # 'test/ble-mesh-discovery-test-suite.cc',
+        # Test files
+        'test/ble-discovery-header-test.cc',
         ]
 
     headers = bld(features='ns3header')
     headers.module = 'ble-mesh-discovery'
     headers.source = [
-        # Model headers will go here
-        # 'model/ble-discovery-header.h',
+        # Model headers
+        'model/ble-discovery-header.h',
         # 'model/ble-mesh-node.h',
         # 'model/ble-discovery-protocol.h',
         # 'model/ble-cluster-election.h',
