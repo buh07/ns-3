@@ -16,7 +16,7 @@
  */
 
 #include "ns3/core-module.h"
-#include "ns3/ble-discovery-header.h"
+#include "ns3/ble-discovery-header-wrapper.h"
 #include "ns3/packet.h"
 
 using namespace ns3;
@@ -34,8 +34,8 @@ main (int argc, char *argv[])
 
   // Example 1: Create a basic discovery message
   NS_LOG_INFO ("\n--- Example 1: Basic Discovery Message ---");
-  BleDiscoveryHeader discoveryMsg;
-  discoveryMsg.SetMessageType (BleDiscoveryHeader::DISCOVERY);
+  BleDiscoveryHeaderWrapper discoveryMsg;
+  // Default is discovery message type
   discoveryMsg.SetSenderId (101);
   discoveryMsg.SetTtl (10);
 
@@ -53,7 +53,7 @@ main (int argc, char *argv[])
   std::cout << "  Sender ID: " << discoveryMsg.GetSenderId () << std::endl;
   std::cout << "  TTL: " << (int)discoveryMsg.GetTtl () << std::endl;
   std::cout << "  Path: ";
-  std::vector<uint32_t> path = discoveryMsg.GetPathSoFar ();
+  std::vector<uint32_t> path = discoveryMsg.GetPath ();
   for (size_t i = 0; i < path.size (); ++i)
     {
       std::cout << path[i];
@@ -73,7 +73,7 @@ main (int argc, char *argv[])
   uint32_t packetSize = packet->GetSize ();
   std::cout << "Serialized packet size: " << packetSize << " bytes" << std::endl;
 
-  BleDiscoveryHeader receivedMsg;
+  BleDiscoveryHeaderWrapper receivedMsg;
   packet->RemoveHeader (receivedMsg);
 
   std::cout << "Received message:" << std::endl;
@@ -82,8 +82,8 @@ main (int argc, char *argv[])
 
   // Example 3: Election announcement message
   NS_LOG_INFO ("\n--- Example 3: Election Announcement ---");
-  BleDiscoveryHeader electionMsg;
-  electionMsg.SetMessageType (BleDiscoveryHeader::ELECTION_ANNOUNCEMENT);
+  BleDiscoveryHeaderWrapper electionMsg;
+  electionMsg.SetAsElectionMessage ();
   electionMsg.SetSenderId (201);
   electionMsg.SetTtl (8);
 
@@ -115,7 +115,7 @@ main (int argc, char *argv[])
 
   // Example 4: TTL operations
   NS_LOG_INFO ("\n--- Example 4: TTL Operations ---");
-  BleDiscoveryHeader ttlMsg;
+  BleDiscoveryHeaderWrapper ttlMsg;
   ttlMsg.SetTtl (3);
 
   std::cout << "Initial TTL: " << (int)ttlMsg.GetTtl () << std::endl;
@@ -128,7 +128,7 @@ main (int argc, char *argv[])
 
   // Example 5: Loop detection
   NS_LOG_INFO ("\n--- Example 5: Loop Detection ---");
-  BleDiscoveryHeader loopMsg;
+  BleDiscoveryHeaderWrapper loopMsg;
   loopMsg.AddToPath (1);
   loopMsg.AddToPath (2);
   loopMsg.AddToPath (3);

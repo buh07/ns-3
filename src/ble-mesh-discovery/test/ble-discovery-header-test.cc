@@ -13,7 +13,7 @@
  */
 
 #include "ns3/test.h"
-#include "ns3/ble-discovery-header.h"
+#include "ns3/ble-discovery-header-wrapper.h"
 #include "ns3/packet.h"
 #include "ns3/log.h"
 
@@ -48,7 +48,7 @@ void
 BleDiscoveryHeaderTestCase::DoRun (void)
 {
   // Test 1: Basic header creation and getters/setters
-  BleDiscoveryHeader header;
+  BleDiscoveryHeaderWrapper header;
   header.SetSenderId (42);
   header.SetTtl (10);
 
@@ -68,7 +68,7 @@ BleDiscoveryHeaderTestCase::DoRun (void)
   NS_TEST_ASSERT_MSG_EQ (header.IsInPath (2), true, "Node 2 should be in path");
   NS_TEST_ASSERT_MSG_EQ (header.IsInPath (5), false, "Node 5 should not be in path");
 
-  std::vector<uint32_t> path = header.GetPathSoFar ();
+  std::vector<uint32_t> path = header.GetPath ();
   NS_TEST_ASSERT_MSG_EQ (path.size (), 3, "Path should have 3 nodes");
   NS_TEST_ASSERT_MSG_EQ (path[0], 1, "First node should be 1");
   NS_TEST_ASSERT_MSG_EQ (path[2], 3, "Third node should be 3");
@@ -85,13 +85,13 @@ BleDiscoveryHeaderTestCase::DoRun (void)
   NS_TEST_ASSERT_MSG_EQ (retrieved.z, 30.5, "GPS Z coordinate should match");
 
   // Test 5: Election announcement fields
-  header.SetMessageType (BleDiscoveryHeader::ELECTION_ANNOUNCEMENT);
+  header.SetAsElectionMessage ();
   header.SetClassId (100);
   header.SetPdsf (150);
   header.SetScore (0.85);
   header.SetHash (12345);
 
-  NS_TEST_ASSERT_MSG_EQ (header.GetMessageType (), BleDiscoveryHeader::ELECTION_ANNOUNCEMENT,
+  NS_TEST_ASSERT_MSG_EQ (header.IsElectionMessage (), true,
                          "Message type should be ELECTION_ANNOUNCEMENT");
   NS_TEST_ASSERT_MSG_EQ (header.GetClassId (), 100, "Class ID should be 100");
   NS_TEST_ASSERT_MSG_EQ (header.GetPdsf (), 150, "PDSF should be 150");
@@ -102,7 +102,7 @@ BleDiscoveryHeaderTestCase::DoRun (void)
   Ptr<Packet> packet = Create<Packet> ();
   packet->AddHeader (header);
 
-  BleDiscoveryHeader deserializedHeader;
+  BleDiscoveryHeaderWrapper deserializedHeader;
   packet->RemoveHeader (deserializedHeader);
 
   NS_TEST_ASSERT_MSG_EQ (deserializedHeader.GetSenderId (), header.GetSenderId (),
@@ -112,7 +112,7 @@ BleDiscoveryHeaderTestCase::DoRun (void)
   NS_TEST_ASSERT_MSG_EQ (deserializedHeader.GetClassId (), header.GetClassId (),
                          "Deserialized class ID should match");
 
-  std::vector<uint32_t> deserializedPath = deserializedHeader.GetPathSoFar ();
+  std::vector<uint32_t> deserializedPath = deserializedHeader.GetPath ();
   NS_TEST_ASSERT_MSG_EQ (deserializedPath.size (), path.size (),
                          "Deserialized path size should match");
 }

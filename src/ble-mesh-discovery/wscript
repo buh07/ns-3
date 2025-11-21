@@ -16,8 +16,13 @@ def build(bld):
                                                            'energy', 'propagation',
                                                            'ble'])
     module.source = [
-        # Model files
-        'model/ble-discovery-header.cc',
+        # Pure C protocol core (portable to embedded systems)
+        'model/protocol-core/ble_discovery_packet.c',
+
+        # C++ wrapper for NS-3 integration
+        'model/ble-discovery-header-wrapper.cc',
+
+        # Future model files
         # 'model/ble-mesh-node.cc',
         # 'model/ble-discovery-protocol.cc',
         # 'model/ble-cluster-election.cc',
@@ -38,8 +43,13 @@ def build(bld):
     headers = bld(features='ns3header')
     headers.module = 'ble-mesh-discovery'
     headers.source = [
-        # Model headers
-        'model/ble-discovery-header.h',
+        # Pure C protocol headers (can be used standalone)
+        'model/protocol-core/ble_discovery_packet.h',
+
+        # C++ wrapper header
+        'model/ble-discovery-header-wrapper.h',
+
+        # Future model headers
         # 'model/ble-mesh-node.h',
         # 'model/ble-discovery-protocol.h',
         # 'model/ble-cluster-election.h',
